@@ -7,7 +7,7 @@ query getMe($username: String, $meId: String) {
     username
     email
     password
-    savedBoods {
+    savedBooks {
       _id
       authors
       description
