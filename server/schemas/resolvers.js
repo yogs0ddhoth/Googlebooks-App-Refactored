@@ -34,12 +34,22 @@ const resolvers = {
     },
     saveBook: async (parent, { book }, context) => {
       return await User.findOneAndUpdate( // save a book to a user's `savedBooks` field
-        { _id: context._id }, { $addToSet: { savedBooks: book } }, { new: true, runValidators: true }
+        { _id: context._id }, 
+        { $addToSet: { savedBooks: book } }, 
+        { 
+          new: true, 
+          runValidators: true 
+        }
       );
     },
     removeBook: async (parents, args, context) => {
       return await User.findOneAndUpdate( // remove a book from `savedBooks`
-        { _id: context._id }, { $pull: { savedBooks: { bookId: args.bookId } } }, { new: true, runValidators: true }
+        { _id: context._id }, 
+        { $pull: { savedBooks: { bookId: args.bookId } } }, 
+        { 
+          new: true, 
+          runValidators: true 
+        }
       );
     },
   }
