@@ -1,30 +1,29 @@
 const { User } = require('../models');
 const { AuthenticationError } = require('apollo-server-express');
 const { signToken } = require('../utils/auth');
-const { isValidObjectId } = require('mongoose');
+// const { isValidObjectId } = require('mongoose');
 const resolvers = {
   Query: {
-    me: async (parent, args, context) =>{
-      console.log('Query-Test Context:', context);
-      return User.findOne(
+    me: async (parent, args, context) =>{ 
+      return await User.findOne( // get a single user by either their id or their username
         { $or: [{ _id: context._id}, { username: context.username }] }
       ).populate('savedBooks');
-    }
+    },
   },
   Mutation: {
     addUser: async (parent, { username, email, password }) => {
+      // create a user, sign a token
       const user = await User.create({ username, email, password });
       const token = signToken(user);
 
       return { token, user };
     },
     loginUser: async (parent,  { email, password }) => {
-      
-      const user = await User.findOne( { email: email } );
+       // login a user, sign a token
+      const user = await User.findOne({ email: email });
       if (!user) {
         throw new AuthenticationError('Incorrect credentials');
       }
-
       const correctPw = await user.isCorrectPassword(password);
       if (!correctPw) {
         throw new AuthenticationError('Incorrect credentials');
@@ -34,36 +33,15 @@ const resolvers = {
       return { token, user };
     },
     saveBook: async (parent, { book }, context) => {
-      console.log('args:', book);
-      console.log('context:', context);
-      const updatedUser = await User.findOneAndUpdate(
-        { _id: context._id },
-        { $addToSet: { savedBooks: book } },
-        { new: true, runValidators: true }
+      return await User.findOneAndUpdate( // save a book to a user's `savedBooks` field
+        { _id: context._id }, { $addToSet: { savedBooks: book } }, { new: true, runValidators: true }
       );
-      
-      console.log('Updated User:', updatedUser);
-
-      return updatedUser;
     },
-
     removeBook: async (parents, args, context) => {
-      console.log('args:', args);
-      // console.log('context:', context);
-
-      const updatedUser = await User.findOneAndUpdate(
-        { _id: context._id },
-        // { username: 'asdf' }, 
-        { $pull: { savedBooks: { bookId: args.bookId } } },
-        { new: true, 
-          runValidators: true 
-        }
+      return await User.findOneAndUpdate( // remove a book from `savedBooks`
+        { _id: context._id }, { $pull: { savedBooks: { bookId: args.bookId } } }, { new: true, runValidators: true }
       );
-      
-      console.log('Updated User:', updatedUser);
-
-      return updatedUser;
-    }
+    },
   }
 }
 
