@@ -1,7 +1,7 @@
 const { User } = require('../models');
 const { AuthenticationError } = require('apollo-server-express');
 const { signToken } = require('../utils/auth');
-// const { isValidObjectId } = require('mongoose');
+
 const resolvers = {
   Query: {
     me: async (parent, args, context) =>{ 
