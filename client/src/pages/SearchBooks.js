@@ -35,7 +35,7 @@ const SearchBooks = () => {
         throw new Error('something went wrong!');
       }
       const { items } = await response.json();
-      // parse and map response
+      // parse and map response to const bookData
       const bookData = items.map((book) => ({
         bookId: book.id,
         authors: book.volumeInfo.authors || ['No author to display'],
@@ -43,7 +43,7 @@ const SearchBooks = () => {
         description: book.volumeInfo.description,
         image: book.volumeInfo.imageLinks?.thumbnail || '',
       }));
-      setSearchedBooks(bookData); // save response map to state
+      setSearchedBooks(bookData); // update state with bookData
       setSearchInput(''); // clear input field
     } catch (err) {
       console.error(err);

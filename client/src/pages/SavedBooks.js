@@ -14,33 +14,28 @@ const SavedBooks = () => {
   // initialize GET_ME query and save response as const 'user'
   const { loading, error, data } = useQuery(GET_ME);
   const user = data?.me || data?.user || {};
-  console.log('GET_ME:', user);
 
-  // initialize state with response from getMe
-  const [userState, setUserState] = useState({...user});
-  console.log('STATE:', userState);
+  const [userState, setUserState] = useState({...user}); // create state to hold user information
 
   // if userState is not initialized, render the page with data from 'user'
   const userData = userState.savedBooks ? userState : user;
-  console.log('USER_DATA:', userData);
  
   async function handleDeleteBook(bookId) {
     try { // remove book from database by bookId
-      console.log('ARG:', bookId);
       const response = await removeBook({ variables: { bookId: bookId } });
-      console.log('RESPONSE:', response.data);
+  
       setUserState({ ...response.data.removeBook }); // update state
-      removeBookId(bookId);
+      removeBookId(bookId); // update local storage
     } catch (err) {
       console.error(err);
     } // upon success, remove book's id from localStorage
     
   }
-  // if data isn't here yet, say so
-  if (loading) {
+  
+  if (loading) { // if data isn't here yet, say so
     return <h2>LOADING...</h2>;
-  }
-  if (error) return `Error! ${error.message}`;
+  } 
+  if (error) return `Error! ${error.message}`; // return errors
 
   return (
     <>
