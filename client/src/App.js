@@ -15,13 +15,8 @@ import Navbar from './components/Navbar';
 
 const httpLink = createHttpLink({ uri: '/graphql' });
 
-const authlink= setContext((_, { headers }) => {
-  console.log(httpLink);
+const authlink= setContext((_, { headers }) => { // configure context to save tokens
   const token = localStorage.getItem('id_token');
-  console.log('Payload:', {headers: { 
-      ...headers, 
-      authorization: token ? `Bearer ${token}` : '' 
-    }})
   return { 
     headers: { 
       ...headers, 
@@ -29,7 +24,7 @@ const authlink= setContext((_, { headers }) => {
     } 
   };
 })
-const client = new ApolloClient(
+const client = new ApolloClient( // configure client
   { link: authlink.concat(httpLink), cache: new InMemoryCache() }
 );
 
